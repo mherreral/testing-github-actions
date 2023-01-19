@@ -5,29 +5,32 @@ jobs:
   run-linters:
     runs-on: ubuntu-latest
     steps:
-    # - name: checkout git repo
-    #   uses: actions/checkout@v3
-    # - name: run check
-    #   uses: hadolint/hadolint-action@v3.0.0
-    #   with:
-    #     recursive: true
-    #     verbose: true
-    - name: Update Pull Request
-      uses: actions/github-script@v6
-      if: github.event_name == 'pull_request'
+    - name: checkout-repo
+      uses: actions/checkout@v3
+    - name: run-hadolint
+      uses: hadolint/hadolint-action@v3.0.0
       with:
-        script: |
-          const output = `
-          #### Hadolint: \`${{ steps.hadolint.outcome }}\`
-          \`\`\`
-          ${process.env.HADOLINT_RESULTS}
-          \`\`\`
-          `;
+        recursive: true
+    - name: print-info
+      if: failure() && steps.run-hadolint.outcome != 'success'
+      run: |
+        echo: "errors: '${{ steps.run-hadolint.outcome }}'"
+    # - name: Update Pull Request
+    #   uses: actions/github-script@v6
+    #   if: github.event_name == 'pull_request'
+    #   with:
+    #     script: |
+    #       const output = `
+    #       #### Hadolint: \`${{ steps.hadolint.outcome }}\`
+    #       \`\`\`
+    #       ${process.env.HADOLINT_RESULTS}
+    #       \`\`\`
+    #       `;
 
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          })
+    #       github.rest.issues.createComment({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         body: output
+    #       })
   
