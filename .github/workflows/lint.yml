@@ -10,5 +10,6 @@ jobs:
     - name: run check
       uses: hadolint/hadolint-action@v3.0.0
       with:
-        recursive:  true
+        recursive: true
+        verbose: true
   
