@@ -28,7 +28,7 @@ jobs:
       with:
         tf_actions_version: ${{ env.tf_version }}
         tg_actions_version: ${{ env.tg_version }}
-        tf_actions_subcommand: hclfmt --terragrunt-check
+        tf_actions_subcommand: hclfmt
         tf_actions_comment: false
 
     - name: print-info
