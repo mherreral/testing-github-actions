@@ -1,54 +1,54 @@
 name: syntax checker
 on: pull_request
 env:
-  tf_version: 'latest'
-  tg_version: 'latest'
-  tf_working_dir: '.'
+  tf_version: "latest"
+  tg_version: "latest"
+  tf_working_dir: "."
 
 jobs:
   run-linters:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout-repo
-      uses: actions/checkout@v3
+      - name: checkout-repo
+        uses: actions/checkout@v3
 
-      # Docker linter
-    - name: run hadolint
-      if: always()
-      id: run-hadolint
-      uses: hadolint/hadolint-action@v3.0.0
-      with:
-        recursive: true
+        # Docker linter
+      - name: run hadolint
+        if: always()
+        id: run-hadolint
+        uses: hadolint/hadolint-action@v3.0.0
+        with:
+          recursive: true
 
-      # Terragrunt linter
-    - name: run terragrunt format check
-      id: run-hclfmt
-      if: always()
-      uses: nayyara-cropsey/terragrunt-github-actions@master
-      with:
-        tf_actions_version: ${{ env.tf_version }}
-        tg_actions_version: ${{ env.tg_version }}
-        tf_actions_subcommand: hclfmt
-        tf_actions_comment: false
+        # Terragrunt linter
+      - name: run terragrunt format check
+        id: run-hclfmt
+        if: always()
+        uses: nayyara-cropsey/terragrunt-github-actions@master
+        with:
+          tf_actions_version: ${{ env.tf_version }}
+          tg_actions_version: ${{ env.tg_version }}
+          tf_actions_subcommand: hclfmt
+          tf_actions_comment: false
 
-      # Bash linter
-    - name: run shfmt linter
-      id: run-shfmt
-      if: always()
-      uses: luizm/action-sh-checker@master
-      with:
-        sh_checker_shellcheck_disable: true
+        # Bash linter
+      - name: run shfmt linter
+        id: run-shfmt
+        if: always()
+        uses: luizm/action-sh-checker@master
+        with:
+          sh_checker_shellcheck_disable: true
 
-      # Yaml linter
-    - name: run yaml linter
-      id: run-yamllint
-      if: always()
-      uses: ibiqlik/action-yamllint@v3
+        # Yaml linter
+      - name: run yaml linter
+        id: run-yamllint
+        if: always()
+        uses: ibiqlik/action-yamllint@v3
 
-    - name: print-info
-      if: failure() && steps.run-hadolint.outcome != 'success'
-      run: |
-        echo "errors: $HADOLINT_RESULTS"
+      - name: print-info
+        if: failure() && steps.run-hadolint.outcome != 'success'
+        run: |
+          echo "errors: $HADOLINT_RESULTS"
     # - name: Update Pull Request
     #   uses: actions/github-script@v6
     #   if: github.event_name == 'pull_request'
@@ -67,4 +67,3 @@ jobs:
     #         repo: context.repo.repo,
     #         body: output
     #       })
-  
