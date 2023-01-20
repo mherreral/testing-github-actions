@@ -12,7 +12,7 @@ jobs:
       - name: checkout-repo
         uses: actions/checkout@v3
 
-        # Docker linter
+      # Docker linter
       - name: run hadolint
         if: always()
         id: run-hadolint
@@ -20,7 +20,7 @@ jobs:
         with:
           recursive: true
 
-        # Terragrunt linter
+      # Terragrunt linter
       - name: run terragrunt format check
         id: run-hclfmt
         if: always()
@@ -31,7 +31,7 @@ jobs:
           tf_actions_subcommand: hclfmt
           tf_actions_comment: false
 
-        # Bash linter
+      # Bash linter
       - name: run shfmt linter
         id: run-shfmt
         if: always()
@@ -39,16 +39,28 @@ jobs:
         with:
           sh_checker_shellcheck_disable: true
 
-        # Yaml linter
+      # Yaml linter
       - name: run yaml linter
         id: run-yamllint
         if: always()
         uses: ibiqlik/action-yamllint@v3
 
+      # Comment pr with failures
+      # - name: make comment
+      #   if: failure() && steps.run-hadolint.outcome != 'success'
+      #   uses: peter-evans/find-comment@v2
+      #   with:
+      #     issue-number: ${{ github.event.pull_request.number }}
+      #     body: |
+      #     Hadolint errors: $HADOLINT_RESULTS
+      #     Terragrunt errors: uwu
+
       - name: print-info
-        if: failure() && steps.run-hadolint.outcome != 'success'
+        if: failure() || steps.run-hadolint.outcome != 'success' || steps.run-hclfmt.outcome != 'success' || steps.run-shfmt.outcome != 'success' || steps.run-yamllint.outcome != 'success'
         run: |
-          echo "errors: $HADOLINT_RESULTS"
+          echo "hadolint errors: $HADOLINT_RESULTS"
+          echo "terragrunt errors: $steps.run-hclfmt.tf_actions_output"
+          echo "bash errors: $steps.run-shfmt.outcome"
     # - name: Update Pull Request
     #   uses: actions/github-script@v6
     #   if: github.event_name == 'pull_request'
