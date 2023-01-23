@@ -40,10 +40,12 @@ jobs:
           sh_checker_shellcheck_disable: true
 
       # Yaml linter
-      - name: run yaml linter
-        id: run-yamllint
-        if: always()
-        uses: ibiqlik/action-yamllint@v3
+      - name: check docker compose
+        run: docker compose -f docker-compose.yml config
+      # - name: run yaml linter
+      #   id: run-yamllint
+      #   if: always()
+      #   uses: ibiqlik/action-yamllint@v3
 
       # Safety check pending
       # Docker scan
