@@ -45,6 +45,18 @@ jobs:
         if: always()
         uses: ibiqlik/action-yamllint@v3
 
+      # Safety check pending
+      # Docker scan
+      - name: Build the agnostic container image
+        id: build-agmostic-cont
+        if: always()
+        run: docker build . --file Dockerfile --tag localbuild/agnostic_cont:latest
+      
+      - name: scan docker image
+        if: always()
+        id: scan-agnostic-image
+        uses: anchore/scan-action@v3 
+
       # Comment pr with failures
       # - name: make comment
       #   if: failure() && steps.run-hadolint.outcome != 'success'
@@ -55,11 +67,11 @@ jobs:
       #     Hadolint errors: $HADOLINT_RESULTS
       #     Terragrunt errors: uwu
 
-      - name: print-info
-        if: failure() || steps.run-hadolint.outcome != 'success' || steps.run-hclfmt.outcome != 'success' || steps.run-shfmt.outcome != 'success' || steps.run-yamllint.outcome != 'success'
-        run: |
-          echo "hadolint errors: $HADOLINT_RESULTS"
-          echo "errors: $STEPS_CONTEXT"
+      # - name: print-info
+      #   if: failure() || steps.run-hadolint.outcome != 'success' || steps.run-hclfmt.outcome != 'success' || steps.run-shfmt.outcome != 'success' || steps.run-yamllint.outcome != 'success'
+      #   run: |
+      #     echo "hadolint errors: $HADOLINT_RESULTS"
+      #     echo "errors: $STEPS_CONTEXT"
     # - name: Update Pull Request
     #   uses: actions/github-script@v6
     #   if: github.event_name == 'pull_request'
