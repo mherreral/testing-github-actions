@@ -51,11 +51,11 @@ jobs:
         id: build-agmostic-cont
         if: always()
         run: docker build . --file Dockerfile --tag localbuild/agnostic_cont:latest
-      
+
       - name: scan docker image
         if: always()
         id: scan-agnostic-image
-        uses: anchore/scan-action@v3 
+        uses: anchore/scan-action@v3
 
       # Comment pr with failures
       # - name: make comment
