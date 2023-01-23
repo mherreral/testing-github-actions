@@ -3,3 +3,8 @@ extends: default
 ignore:
   - .github/workflows/
   - .yamllint
+
+rules:
+  document-start:
+    ignore:
+    - docker-compose.yml
